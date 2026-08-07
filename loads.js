@@ -8,6 +8,34 @@ const guests = [
   { id: "5", name: "Familia Hernández", passes: 5 },
 ];
 
+window.LocalGuestSeeds = {
+  ...(window.LocalGuestSeeds || {}),
+  anthonycarolina2026: guests.reduce((acc, guest) => {
+    acc[String(guest.id)] = {
+      id: String(guest.id),
+      nombre: guest.name,
+      pases: Number(guest.passes || 1),
+      activo: true,
+    };
+    return acc;
+  }, {}),
+};
+
+window.seedEventGuestsToFirebase = async function seedEventGuestsToFirebase() {
+  const eventId = window.config?.event?.defaultEventId || "anthonycarolina2026";
+  const rsvpDB = window.RSVPDatabase;
+
+  if (!rsvpDB?.migrateLocalGuestsToFirebase) {
+    console.warn("RSVPDatabase no está disponible. Revisa que database.js esté cargado.");
+    return { ok: false, guests: 0 };
+  }
+
+  await rsvpDB.seedEventConfigToFirebase?.(eventId, { force: true });
+  const result = await rsvpDB.migrateLocalGuestsToFirebase(eventId, { force: true });
+  console.log(`Invitados creados en Firebase: ${result.total || guests.length}`);
+  return { ok: true, guests: result.total || guests.length };
+};
+
 // Helper: leer parámetros ?id=1
 function getQueryParam(key) {
   const params = new URLSearchParams(window.location.search);

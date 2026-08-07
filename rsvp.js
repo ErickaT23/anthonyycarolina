@@ -4,7 +4,14 @@ const RSVP_ENDPOINT =
 
 const $ = (s) => document.querySelector(s);
 
-/**************** HELPERS ****************/
+function getEventId() {
+  return window.config?.event?.defaultEventId || "anthonycarolina2026";
+}
+
+function getRemoteGuestId(guestId) {
+  return `${getEventId()}_${String(guestId || "")}`;
+}
+
 function showMsg(el, text, type = "ok") {
   if (!el) return;
   el.textContent = text;
@@ -18,82 +25,18 @@ function hideMsg(el) {
   el.textContent = "";
 }
 
-/**************** UI: CONFIRMADO ****************/
-function markConfirmedUI() {
-  const btn = $("#btnConfirmarRsvp");
-  const msg = $("#msgRsvp"); // mensaje debajo del botón (en la sección)
-
-  if (btn) {
-    btn.textContent = "Confirmación enviada ✓";
-    btn.disabled = true;
-    btn.classList.add("rsvp-confirmed");
-  }
-
-  if (msg) {
-    msg.style.display = "block";
-    msg.className = "rsvp-msg ok";
-    msg.textContent = "Gracias, ya has enviado tu confirmación.";
-  }
-}
-
-function resetConfirmUI() {
-  const btn = $("#btnConfirmarRsvp");
-  const msg = $("#msgRsvp");
-
-  if (btn) {
-    btn.textContent = "Confirmar";
-    btn.disabled = false;
-    btn.classList.remove("rsvp-confirmed");
-  }
-
-  if (msg) {
-    msg.style.display = "none";
-    msg.textContent = "";
-  }
-}
-
-/**************** MODAL ****************/
-function openRsvpModal() {
-  const b = $("#rsvpBackdrop");
-  if (!b) return;
-
-  b.style.display = "flex";
-  b.setAttribute("aria-hidden", "false");
-  setTimeout(() => b.classList.add("show"), 0);
-
-  const firstFocusable = $("#btnRsvpSi") || $("#btnRsvpClose");
-  if (firstFocusable) setTimeout(() => firstFocusable.focus(), 50);
-}
-
-function closeRsvpModal() {
-  const b = $("#rsvpBackdrop");
-  if (!b) return;
-
-  b.classList.remove("show");
-  setTimeout(() => {
-    b.style.display = "none";
-    b.setAttribute("aria-hidden", "true");
-
-    const opener = $("#btnConfirmarRsvp");
-    if (opener) opener.focus();
-  }, 250);
-}
-
-/**************** API ****************/
 async function apiCheck(id) {
   const url = `${RSVP_ENDPOINT}?guestId=${encodeURIComponent(id)}&t=${Date.now()}`;
   const r = await fetch(url, { cache: "no-store" });
   const text = await r.text();
 
-  let j;
   try {
-    j = JSON.parse(text);
+    const j = JSON.parse(text);
+    return j.alreadyConfirmed === true || j.alreadyConfirmed === "true" || j.alreadyConfirmed === 1;
   } catch {
     console.warn("apiCheck no devolvió JSON. Respuesta:", text.slice(0, 200));
     return false;
   }
-
-  return j.alreadyConfirmed === true || j.alreadyConfirmed === "true" || j.alreadyConfirmed === 1;
 }
 
 async function apiSend(data) {
@@ -117,42 +60,18 @@ async function apiSend(data) {
 function clearStoredConfirmations() {
   try {
     Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith("rsvp_confirmed_")) {
-        localStorage.removeItem(key);
-      }
+      if (key.startsWith("rsvp_confirmed_")) localStorage.removeItem(key);
     });
   } catch (error) {
     console.warn("No se pudo limpiar la memoria local de RSVP:", error);
   }
 }
 
-function enableRsvpButtons(enabled = true) {
-  const btnSi = document.getElementById("btnRsvpSi");
-  const btnNo = document.getElementById("btnRsvpNo");
-  if (btnSi) btnSi.disabled = !enabled;
-  if (btnNo) btnNo.disabled = !enabled;
-}
-
-// cerrar con cualquier tap/click después de mostrar mensaje
-function closeOnNextTap() {
-  setTimeout(() => {
-    const handler = () => {
-      closeRsvpModal();
-      document.removeEventListener("click", handler, true);
-      document.removeEventListener("touchstart", handler, true);
-    };
-    document.addEventListener("click", handler, true);
-    document.addEventListener("touchstart", handler, true);
-  }, 50);
-}
-
-/**************** GUEST desde URL + DOM ****************/
 function getGuestFromURL() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
   if (!id) return null;
 
-  // 1) Fuente de verdad: loads.js
   if (window.currentGuest && String(window.currentGuest.id) === String(id)) {
     return {
       id: String(window.currentGuest.id),
@@ -161,10 +80,8 @@ function getGuestFromURL() {
     };
   }
 
-  // 2) Fallback DOM
   const nameEl = document.getElementById("guestCardName");
   const seatsEl = document.getElementById("guestCardSeats");
-
   const nombre = (nameEl?.textContent || "Invitado").trim() || "Invitado";
   const m = (seatsEl?.textContent || "").match(/\d+/);
   const pases = m ? parseInt(m[0], 10) : 1;
@@ -172,126 +89,158 @@ function getGuestFromURL() {
   return { id, nombre, pases };
 }
 
-/**************** INIT ****************/
-document.addEventListener("DOMContentLoaded", () => {
-  let invitado = getGuestFromURL();
-  clearStoredConfirmations();
+function markConfirmedUI(message) {
+  const form = $("#rsvp-form");
+  const btn = $("#btnConfirmarRsvp");
+  const msg = $("#msgRsvp");
 
-  const btnOpen = $("#btnConfirmarRsvp");
-  const btnClose = $("#btnRsvpClose");
-  const btnSi = $("#btnRsvpSi");
-  const btnNo = $("#btnRsvpNo");
+  if (form) form.classList.add("is-confirmed");
+  document.querySelectorAll('#rsvp-form input, #rsvp-form select, #rsvp-form button').forEach((el) => {
+    if (!el.hasAttribute("readonly")) el.disabled = true;
+  });
 
-  const inputNombre = $("#rsvpNombre");
-  const inputPases = $("#rsvpPases");
-  const msgModal = $("#rsvpMsgModal");
-
-  if (!btnOpen || !btnSi || !btnNo || !inputNombre || !inputPases) return;
-
-  hideMsg(msgModal);
-
-  // pintar inputs si hay invitado
-  if (invitado) {
-    inputNombre.value = invitado.nombre;
-    inputPases.value = invitado.pases;
+  if (btn) {
+    btn.textContent = "Confirmación enviada ✓";
+    btn.classList.add("rsvp-confirmed");
   }
 
-  btnSi.type = "button";
-  btnNo.type = "button";
+  if (msg) {
+    msg.style.display = "block";
+    msg.className = "rsvp-msg ok";
+    msg.textContent = message || "Gracias por confirmar tu asistencia.";
+  }
+}
 
-  // Estado inicial: manda el backend
-  (async () => {
-    if (!invitado) return;
-    try {
-      const ya = await apiCheck(invitado.id);
-      if (ya) {
-        markConfirmedUI();
-        enableRsvpButtons(false);
-      } else {
-        resetConfirmUI();
-        enableRsvpButtons(true);
-      }
-    } catch (e) {
-      console.warn("apiCheck inicial falló:", e);
-      resetConfirmUI();
-      enableRsvpButtons(true);
-    }
-  })();
+function resetConfirmUI() {
+  const form = $("#rsvp-form");
+  const btn = $("#btnConfirmarRsvp");
+  const msg = $("#msgRsvp");
 
-  /******** Abrir modal ********/
-  btnOpen.addEventListener("click", async () => {
-    // refrescar invitado por si loads tardó
+  if (form) form.classList.remove("is-confirmed");
+  document.querySelectorAll('#rsvp-form input, #rsvp-form select, #rsvp-form button').forEach((el) => {
+    if (!el.hasAttribute("readonly")) el.disabled = false;
+  });
+
+  if (btn) {
+    btn.textContent = "Confirmar asistencia";
+    btn.classList.remove("rsvp-confirmed");
+  }
+
+  hideMsg(msg);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  clearStoredConfirmations();
+
+  const form = $("#rsvp-form");
+  const inputNombre = $("#rsvp-name");
+  const guestCountWrapper = $("#guest-count-wrapper");
+  const guestCount = $("#guest-count");
+  const btnSubmit = $("#btnConfirmarRsvp");
+  const radioYes = $("#rsvp-response-yes");
+  const radioNo = $("#rsvp-response-no");
+  const msg = $("#msgRsvp");
+
+  if (!form || !inputNombre || !guestCountWrapper || !guestCount || !btnSubmit || !radioYes || !radioNo || !msg) return;
+
+  let invitado = getGuestFromURL();
+
+  function paintGuestData() {
     invitado = getGuestFromURL();
 
-    openRsvpModal();
-    hideMsg(msgModal);
-
     if (!invitado) {
-      showMsg(msgModal, "No se encontró invitado en la URL. Usa ?id=1", "error");
+      inputNombre.value = "Nombre del invitado";
+      guestCount.innerHTML = '<option value="1">1 pase</option>';
+      guestCount.disabled = true;
       return;
     }
 
-    // actualizar inputs SIEMPRE
     inputNombre.value = invitado.nombre;
-    inputPases.value = invitado.pases;
 
-    // ✅ Re-check real: si borraron en Sheet, reactivar
-    try {
-      const ya = await apiCheck(invitado.id);
-
-      if (!ya) {
-        resetConfirmUI();
-        enableRsvpButtons(true);
-      } else {
-        markConfirmedUI();
-        enableRsvpButtons(false);
-        showMsg(msgModal, "Gracias, ya has enviado tu confirmación.", "ok");
-        // NO cerramos automático, se cierra con tap cuando quieran
-        closeOnNextTap();
-      }
-    } catch (e) {
-      console.warn("apiCheck al abrir falló:", e);
+    const maxPasses = Math.max(1, Number(invitado.pases || 1));
+    guestCount.innerHTML = "";
+    for (let count = maxPasses; count >= 1; count -= 1) {
+      const option = document.createElement("option");
+      option.value = String(count);
+      option.textContent = `${count} ${count === 1 ? "pase" : "pases"}`;
+      guestCount.appendChild(option);
     }
-  });
+  }
 
-  /******** Cerrar modal ********/
-  if (btnClose) btnClose.addEventListener("click", closeRsvpModal);
+  function toggleGuestCount() {
+    const show = radioYes.checked;
+    guestCountWrapper.style.display = show ? "grid" : "none";
+    guestCount.disabled = !show;
+  }
 
-  /******** Confirmar ********/
-  async function confirmar(respuesta) {
+  paintGuestData();
+  toggleGuestCount();
+  hideMsg(msg);
+
+  window.addEventListener("guest:updated", paintGuestData);
+  radioYes.addEventListener("change", toggleGuestCount);
+  radioNo.addEventListener("change", toggleGuestCount);
+
+  (async () => {
     if (!invitado) return;
+    try {
+      const ya = await apiCheck(getRemoteGuestId(invitado.id));
+      if (ya) {
+        markConfirmedUI();
+      } else {
+        resetConfirmUI();
+      }
+    } catch (error) {
+      console.warn("apiCheck inicial falló:", error);
+      resetConfirmUI();
+    }
+  })();
 
-    enableRsvpButtons(false); // evita doble tap mientras guarda
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    hideMsg(msg);
+    invitado = getGuestFromURL();
 
-    const msgSi = "Gracias por confirmar tu asistencia y hacer este día aún más especial.";
-    const msgNo = "Lamentamos que no puedas acompañarnos en esta ocasión y agradecemos tu respuesta.";
+    if (!invitado) {
+      showMsg(msg, "No se encontró el invitado en la URL. Usa ?id=1.", "error");
+      return;
+    }
+
+    if (!radioYes.checked && !radioNo.checked) {
+      showMsg(msg, "Selecciona si asistirás o no para continuar.", "error");
+      return;
+    }
+
+    const respuesta = radioYes.checked ? "SI" : "NO";
+    const pasesSeleccionados = respuesta === "SI"
+      ? Math.max(1, Number(guestCount.value || invitado.pases || 1))
+      : 0;
+
+    btnSubmit.disabled = true;
 
     try {
       const res = await apiSend({
-        guestId: invitado.id,
+        guestId: getRemoteGuestId(invitado.id),
         nombre: invitado.nombre,
-        pases: String(invitado.pases),
+        pases: String(pasesSeleccionados),
         respuesta,
       });
 
       if (res && (res.ok === true || res.success === true)) {
-        markConfirmedUI();
-        showMsg(msgModal, respuesta === "SI" ? msgSi : msgNo, "ok");
-
-        // ✅ se cierra al tocar en cualquier lugar, cuando la persona quiera
-        closeOnNextTap();
-      } else {
-        console.warn("Respuesta del endpoint:", res);
-        enableRsvpButtons(true);
-        showMsg(msgModal, "No se pudo guardar tu respuesta. Intenta de nuevo.", "error");
+        const okMessage = respuesta === "SI"
+          ? "Gracias por confirmar tu asistencia. Será un privilegio compartir este día contigo."
+          : "Lamentamos que no puedas acompañarnos en esta ocasión y agradecemos de corazón tu respuesta.";
+        markConfirmedUI(okMessage);
+        return;
       }
-    } catch (e) {
-      console.error("❌ apiSend:", e);
-      enableRsvpButtons(true);
-      showMsg(msgModal, "Error de conexión al enviar tu respuesta.", "error");
-    }
-  }
 
-  btnSi.addEventListener("click", () => confirmar("SI"));
-  btnNo.addEventListener("click", () => confirmar("NO"));
+      console.warn("Respuesta del endpoint:", res);
+      btnSubmit.disabled = false;
+      showMsg(msg, "No se pudo guardar tu respuesta. Intenta de nuevo.", "error");
+    } catch (error) {
+      console.error("apiSend:", error);
+      btnSubmit.disabled = false;
+      showMsg(msg, "Error de conexión al enviar tu respuesta.", "error");
+    }
+  });
 });

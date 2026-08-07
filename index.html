@@ -262,8 +262,8 @@
 </div>
 
 <section class="album fade-in-element" id="albumSection">
-  <div class="event-icon event-icon-fa" aria-hidden="true">
-    <i class="fa-regular fa-images"></i>
+  <div class="event-icon" aria-hidden="true">
+    <img src="images/CAMERA.svg" alt="Álbum digital">
   </div>
   <h3>Álbum digital</h3>
   <img class="album-qr" src="images/QRAC.svg" alt="QR álbum digital">
@@ -274,8 +274,8 @@
 <section class="full-sep" style="background-image:url('images/V5.jpg')"></section>
 
 <section class="wishes fade-in-element" id="wishesSection">
-  <div class="event-icon event-icon-fa" aria-hidden="true">
-    <i class="fa-regular fa-envelope-open"></i>
+  <div class="event-icon" aria-hidden="true">
+    <img src="images/RSVP.svg" alt="Buenos deseos">
   </div>
   <h3>Buenos deseos</h3>
   <p class="wishes-intro">Déjanos un mensaje especial para este día tan importante.</p>
@@ -305,41 +305,40 @@
   </div>
   <h3>Confirmar Asistencia</h3>
   <p class="rsvp-strong">
-    Para nosotros es muy importante que confirmes tu asistencia lo antes posible,
-    o bien indicarnos si no podrás acompañarnos.
+    Para nosotros será un privilegio contar contigo en este día tan especial. Por favor confirma tu asistencia.
   </p>
 
-  <button id="btnConfirmarRsvp" type="button">
-    Confirmar
-  </button>
+  <form id="rsvp-form" class="rsvp-form" novalidate>
+    <div class="form-group">
+      <label for="rsvp-name">Nombre del invitado</label>
+      <input type="text" id="rsvp-name" name="name" value="Nombre del invitado" readonly>
+    </div>
+
+    <div class="form-group">
+      <p class="rsvp-label">Asistirás</p>
+      <div class="rsvp-response-group">
+        <label class="rsvp-radio-option" for="rsvp-response-yes">
+          <input type="radio" id="rsvp-response-yes" name="attendance" value="SI">
+          <span>Sí, con mucho gusto</span>
+        </label>
+        <label class="rsvp-radio-option" for="rsvp-response-no">
+          <input type="radio" id="rsvp-response-no" name="attendance" value="NO">
+          <span>No, lamentablemente no podré</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group" id="guest-count-wrapper" style="display:none">
+      <label for="guest-count">Cantidad de pases</label>
+      <select id="guest-count" name="guests" disabled></select>
+    </div>
+
+    <button type="submit" id="btnConfirmarRsvp">Confirmar asistencia</button>
+  </form>
 
   <div id="msgRsvp" class="rsvp-msg" style="display:none"></div>
 </section>
 
-<!-- ================= RSVP MODAL ================= -->
-<div id="rsvpBackdrop" class="rsvp-backdrop" aria-hidden="true" style="display:none">
-  <div class="rsvp-modal" role="dialog" aria-modal="true">
-    <button class="rsvp-close" id="btnRsvpClose" type="button">×</button>
-
-    <h3>Confirmación de asistencia</h3>
-    <p class="rsvp-sub">Por favor selecciona una opción</p>
-
-    <label>Nombre</label>
-    <input id="rsvpNombre" type="text" readonly>
-
-    <label>Cantidad de pases</label>
-    <input id="rsvpPases" type="text" readonly>
-
-    <div class="rsvp-actions">
-      <button id="btnRsvpSi" class="rsvp-btn rsvp-yes">Sí, asistiré</button>
-      <button id="btnRsvpNo" class="rsvp-btn rsvp-no">No, asistiré</button>
-    </div>
-
-    <div id="rsvpMsgModal" class="rsvp-msg" style="display:none"></div>
-  </div>
-</div>
-
-<section class="full-sep" style="background-image:url('images/V4.jpg')"></section>
   <!-- FRASE FINAL -->
   <section class="love-quote fade-in-element" id="love">
     <p class="quote-script">Para nosotros será un privilegio compartir contigo un momento tan especial.</p>
@@ -378,6 +377,8 @@
   </footer>
 
 </main>
+<script src="config.js"></script>
+<script type="module" src="database.js"></script>
 <script src="loads.js"></script>
 <script src="rsvp.js"></script>
 <script type="module" src="wishes.js"></script>
