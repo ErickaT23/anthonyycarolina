@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anthony & Carolina | 26.12.2026</title>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Anthony & Carolina | 26.12.2026">
+  <meta property="og:description" content="Te invitamos a celebrar nuestro matrimonio en Guatemala.">
+  <meta property="og:image" content="images/MONOGRAMA.svg">
+  <meta name="keywords" content="invitacion de boda, Anthony, Carolina, boda, Guatemala, celebracion">
+  <meta name="author" content="Two Design | Invitaciones Digitales">
+  <link rel="stylesheet" href="style.css">
+  <!-- (Opcional) Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+  <!-- ===================== HERO / SOBRE (PORTADA) ===================== -->
+<header class="cover" id="cover">
+  <div class="cover-inner">
+    <div class="mono">
+      <img src="images/MONOGRAMA.svg" alt="Monograma Anthony & Carolina" class="mono-img">
+    </div>
+    <h1 class="couple">Anthony <span class="amp">&</span> Carolina</h1>
+    <p class="tag">Nos casamos</p>
+
+    <div class="envelope-wrap">
+      <img class="envelope" id="btnOpenEnvelope" src="images/ENVELOPE.svg" alt="Sobre invitación" role="button" tabindex="0">
+    </div>
+
+    <div class="guest-card">
+      <div class="guest-line" id="guestCardName">Nombre del invitado</div>
+      <div class="guest-sub">Hemos reservado</div>
+      <div class="guest-seats">
+        <span id="guestCardSeats">x</span> <span id="guestCardSeatsTxt">lugares</span> en su honor
+      </div>
+    </div>
+
+    <button class="btn-primary" id="btnOpenInvite" type="button">
+      Abrir invitación
+    </button>
+  </div>
+
+</header>
+
+<!-- ===================== CONTENIDO INVITACIÓN ===================== -->
+<main id="invitation" class="invitation" aria-hidden="true">
+
+  <!-- HERO FOTO -->
+  <section class="hero-photo fade-in-element" id="hero">
+    <div class="hero-overlay">
+      <div class="mono hero-mono fade-in-element">
+        <img src="images/MONOGRAMA-BLACK.svg" alt="Monograma" class="mono-img hero-mono-img">
+      </div>
+    </div>
+  </section>
+
+  <div class="hero-quote">
+    <p class="quote-script reveal-gold">Nos casamos</p>
+  </div>
+
+  <!-- NOMBRES EDITORIAL + FECHA VERTICAL + MÚSICA -->
+  <section class="names-editorial fade-in-element" id="names">
+    <div class="names-grid">
+      <div class="names-block">
+        <div class="name-lines">
+          <div>Anthony</div>
+          <div class="and">&</div>
+          <div>Carolina</div>
+        </div>
+      </div>
+
+      <div class="date-vertical">
+        <span>26</span>
+        <span>12</span>
+        <span>26</span>
+      </div>
+    </div>
+
+
+    <p class="names-text">
+      Para nosotros será un privilegio compartir contigo un momento tan especial.
+    </p>
+
+    <button class="music-btn" id="btnMusic" type="button" aria-label="Música">
+      ▶
+    </button>
+    
+    <audio id="bgMusic" preload="auto" loop>
+      <source src="music.mp3" type="audio/mpeg">
+    </audio>
+  </section>
+
+  <!-- CONTADOR -->
+  <section class="countdown fade-in-element" id="countdown">
+    <h3>Solo faltan</h3>
+
+    <div class="count-row">
+
+      <div class="count-item">
+        <div class="flip" id="flipDays">
+          <div class="top"><span class="digit">00</span></div>
+          <div class="bottom"><span class="digit">00</span></div>
+          <div class="top-flip"><span class="digit">00</span></div>
+          <div class="bottom-flip"><span class="digit">00</span></div>
+        </div>
+        <div class="label">DÍAS</div>
+      </div>
+  
+      <div class="count-item">
+        <div class="flip" id="flipHours">
+          <div class="top"><span class="digit">00</span></div>
+          <div class="bottom"><span class="digit">00</span></div>
+          <div class="top-flip"><span class="digit">00</span></div>
+          <div class="bottom-flip"><span class="digit">00</span></div>
+        </div>
+        <div class="label">HORAS</div>
+      </div>
+  
+      <div class="count-item">
+        <div class="flip" id="flipMins">
+          <div class="top"><span class="digit">00</span></div>
+          <div class="bottom"><span class="digit">00</span></div>
+          <div class="top-flip"><span class="digit">00</span></div>
+          <div class="bottom-flip"><span class="digit">00</span></div>
+        </div>
+        <div class="label">MIN</div>
+      </div>
+  
+      <div class="count-item">
+        <div class="flip" id="flipSecs">
+          <div class="top"><span class="digit">00</span></div>
+          <div class="bottom"><span class="digit">00</span></div>
+          <div class="top-flip"><span class="digit">00</span></div>
+          <div class="bottom-flip"><span class="digit">00</span></div>
+        </div>
+        <div class="label">SEG</div>
+      </div>
+    </div>
+
+    <a class="btn-outline calendar-btn" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Anthony+%26+Carolina&dates=20261226T150000/20261226T230000&details=Nos+casamos.+Nos+encantar%C3%A1+compartir+este+d%C3%ADa+contigo.&location=Hacienda+San+Isidro%2C+5ta+avenida+7-20+zona+6+de+Villa+Nueva%2C+Guatemala" target="_blank" rel="noopener">Agregar al calendario</a>
+
+    <div class="half-photo">
+      <img src="images/H3.jpg" alt="Foto pareja">
+    </div>
+  </section>
+
+  <section class="blessing fade-in-element" id="blessing">
+ <h3>Con la bendición de Dios y de nuestras familias</h3>
+
+    <div class="parents">
+      <p><strong>Padres del novio</strong><br>Anthony de León López y Shirley Chuga de de León</p>
+      <p><strong>Padres de la novia</strong><br>José Marcos López Tzoc &#8224; y Miriam Rivera Caballeros</p>
+    </div>
+  </section>
+<!-- FOTO FULLSCREEN SEPARADOR -->
+<section class="full-sep" style="background-image:url('images/V5.jpg')"></section>
+  <!-- ITINERARIO -->
+  <section class="itinerary fade-in-element" id="itinerary">
+
+    <div class="event-card">
+      <div class="event-top">
+        <div class="event-title">Ceremonia</div>
+        <div class="event-photo">
+          <img src="images/venue.png" alt="Lugar de la ceremonia">
+        </div>
+        <div class="event-place">Hacienda San Isidro</div>
+      </div>
+      <div class="event-address">5ta avenida 7-20 zona 6 de Villa Nueva, Guatemala.</div>
+      <div class="event-address event-reference">Referencia: 500 mts adelante de Plaza Villa Nueva, en dirección a la ciudad.</div>
+      <div class="event-time">3:00 pm</div>
+      <div class="event-links">
+        <a class="btn-outline" href="https://ul.waze.com/ul?venue_id=176554129.1765672366.4052114&overview=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location" target="_blank" rel="noopener">Ver en Waze</a>
+        <a class="btn-outline" href="https://maps.app.goo.gl/PZ2Fnbd73NSX3LwZ8" target="_blank" rel="noopener">Ver en Google Maps</a>
+      </div>
+    </div>
+
+    <div class="event-card">
+      <div class="event-top">
+        <div class="event-title">Recepción</div>
+        <div class="event-photo">
+          <img src="images/venue-2.png" alt="Lugar de la recepción">
+        </div>
+        <div class="event-place">Hacienda San Isidro</div>
+      </div>
+      <div class="event-address">5ta avenida 7-20 zona 6 de Villa Nueva, Guatemala.</div>
+      <div class="event-address event-reference">Referencia: 500 mts adelante de Plaza Villa Nueva, en dirección a la ciudad.</div>
+      <div class="event-time">4:00 pm</div>
+      <div class="event-links">
+        <a class="btn-outline" href="https://ul.waze.com/ul?venue_id=176554129.1765672366.4052114&overview=yes&utm_campaign=default&utm_source=waze_website&utm_medium=lm_share_location" target="_blank" rel="noopener">Ver en Waze</a>
+        <a class="btn-outline" href="https://maps.app.goo.gl/PZ2Fnbd73NSX3LwZ8" target="_blank" rel="noopener">Ver en Google Maps</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOTO FULLSCREEN SEPARADOR -->
+  <section class="full-sep" style="background-image:url('images/V2.jpg')"></section>
+
+  <!-- DRESS CODE -->
+  <section class="dress fade-in-element" id="dress">
+    <div class="event-icon">
+      <img src="images/DRESSCODE.png" alt="Código de vestimenta">
+    </div>
+    <h3>Código de vestimenta</h3>
+    <p class="dress-strong">Vestimenta formal</p>
+    <p class="dress-note">Agradeceremos evitar el uso del color blanco.</p>
+  </section>
+
+  <section class="full-sep" style="background-image:url('images/V6.jpg')"></section>
+
+  <!-- MESA DE REGALOS -->
+<!-- ================= MESA DE REGALOS ================= -->
+<section class="gifts fade-in-element" id="gifts">
+
+  <div class="event-icon">
+    <img src="images/GIFTS.svg" alt="Gifts">
+  </div>
+
+  <h3>Regalos</h3>
+
+  <p class="gifts-strong">
+    Si desean tener un detalle con nosotros, recibiremos con mucho cariño sobres con dinero en efectivo
+    o bien una transferencia a la cuenta monetaria que compartimos a continuación.
+  </p>
+
+  <div class="gifts-buttons">
+    <button class="btn-outline btn-shimmer" id="btnTransferencia" type="button">
+      Ver datos bancarios
+    </button>
+  </div>
+
+</section>
+
+
+<!-- ================= MODAL TRANSFERENCIA ================= -->
+<div id="transferBackdrop" class="transfer-backdrop" aria-hidden="true" style="display:none">
+  <div class="transfer-modal" role="dialog" aria-modal="true">
+
+    <button class="transfer-close" id="btnCloseTransfer" type="button">×</button>
+
+    <h3>Datos de Transferencia</h3>
+
+    <p class="transfer-names">Carolina López</p>
+
+    <div class="transfer-info" id="transferData">
+      <p><strong>Medio:</strong> <span id="bankName">Transferencia bancaria</span></p>
+      <p><strong>Cuenta monetaria:</strong> <span id="accountNumber">1230003756</span></p>
+      <p><strong>Tipo:</strong> <span id="accountType">Monetaria</span></p>
+      <p><strong>Nombre:</strong> <span id="accountOwner">Carolina López</span></p>
+    </div>
+    
+    <button class="btn-outline copy-btn" id="btnCopyAccount" type="button">
+      Copiar datos bancarios
+    </button>
+
+    <div id="copyToast" class="copy-toast" style="display:none">✅ Copiado</div>
+
+  </div>
+</div>
+
+<section class="album fade-in-element" id="albumSection">
+  <div class="event-icon event-icon-fa" aria-hidden="true">
+    <i class="fa-regular fa-images"></i>
+  </div>
+  <h3>Álbum digital</h3>
+  <img class="album-qr" src="images/QRAC.svg" alt="QR álbum digital">
+  <p class="album-text">Nos encantará revivir este día a través de tus fotos. Súbelas a nuestro álbum digital.</p>
+  <a class="btn-outline" href="https://drive.google.com/drive/folders/1gKkmz6FWpN8DW0vbptEPXdXSZU0Dfh9u?usp=drive_link" target="_blank" rel="noopener">Subir fotos</a>
+</section>
+
+<section class="full-sep" style="background-image:url('images/V5.jpg')"></section>
+
+<section class="wishes fade-in-element" id="wishesSection">
+  <div class="event-icon event-icon-fa" aria-hidden="true">
+    <i class="fa-regular fa-envelope-open"></i>
+  </div>
+  <h3>Buenos deseos</h3>
+  <p class="wishes-intro">Déjanos un mensaje especial para este día tan importante.</p>
+  <div class="wishes-actions">
+    <button class="btn-outline" id="btnToggleWishForm" type="button" aria-controls="wishFormPanel" aria-expanded="false">Enviar un mensaje</button>
+    <button class="btn-outline" id="btnToggleWishes" type="button" aria-controls="wishesPanel" aria-expanded="false">Leer mensajes</button>
+  </div>
+  <div class="collapsible-panel" id="wishFormPanel" aria-hidden="true">
+    <form class="wish-form" id="wish-form">
+      <input id="wish-name" type="text" placeholder="Tu nombre" autocomplete="name" required>
+      <textarea id="wish-message" rows="4" placeholder="Escribe tu mensaje" required></textarea>
+      <button class="btn-outline" type="submit">Enviar mensaje</button>
+      <p class="wish-status" id="wish-status" aria-live="polite"></p>
+    </form>
+  </div>
+  <div class="collapsible-panel" id="wishesPanel" aria-hidden="true">
+    <div class="wishes-list" id="wishes"></div>
+  </div>
+</section>
+
+  <!-- RSVP (TU BLOQUE) -->
+  <!-- Pega aquí exactamente tu sección RSVP + Modal (como lo enviaste) -->
+  <!-- ================= RSVP SECTION ================= -->
+<section class="rsvp fade-in-element" id="rsvpSection">
+  <div class="event-icon">
+    <img src="images/RSVP.svg" alt="RSVP">
+  </div>
+  <h3>Confirmar Asistencia</h3>
+  <p class="rsvp-strong">
+    Para nosotros es muy importante que confirmes tu asistencia lo antes posible,
+    o bien indicarnos si no podrás acompañarnos.
+  </p>
+
+  <button id="btnConfirmarRsvp" type="button">
+    Confirmar
+  </button>
+
+  <div id="msgRsvp" class="rsvp-msg" style="display:none"></div>
+</section>
+
+<!-- ================= RSVP MODAL ================= -->
+<div id="rsvpBackdrop" class="rsvp-backdrop" aria-hidden="true" style="display:none">
+  <div class="rsvp-modal" role="dialog" aria-modal="true">
+    <button class="rsvp-close" id="btnRsvpClose" type="button">×</button>
+
+    <h3>Confirmación de asistencia</h3>
+    <p class="rsvp-sub">Por favor selecciona una opción</p>
+
+    <label>Nombre</label>
+    <input id="rsvpNombre" type="text" readonly>
+
+    <label>Cantidad de pases</label>
+    <input id="rsvpPases" type="text" readonly>
+
+    <div class="rsvp-actions">
+      <button id="btnRsvpSi" class="rsvp-btn rsvp-yes">Sí, asistiré</button>
+      <button id="btnRsvpNo" class="rsvp-btn rsvp-no">No, asistiré</button>
+    </div>
+
+    <div id="rsvpMsgModal" class="rsvp-msg" style="display:none"></div>
+  </div>
+</div>
+
+<section class="full-sep" style="background-image:url('images/V4.jpg')"></section>
+  <!-- FRASE FINAL -->
+  <section class="love-quote fade-in-element" id="love">
+    <p class="quote-script">Para nosotros será un privilegio compartir contigo un momento tan especial.</p>
+  </section>
+
+  <!-- FOTO CAMBIANTE -->
+  <section class="full-sep full-sep-rotating" id="rotatingSep">
+    <img id="rotatingSepImg" src="images/V4.jpg" alt="Foto pareja">
+  </section>
+
+  <!-- CIERRE -->
+  <section class="closing fade-in-element" id="closing">
+    <div class="mono">
+      <img src="images/MONOGRAMA.svg" alt="Monograma Anthony & Carolina" class="mono-img">
+    </div>
+    <h3>Anthony & Carolina</h3>
+    <p>26 de diciembre de 2026</p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div id="social-icons">
+<a href="https://wa.me/50236011737" target="_blank" aria-label="Whatsapp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+<a href="https://www.facebook.com/thetwodesign" target="_blank" aria-label="Facebook">
+  <i class="fab fa-facebook"></i>
+</a>
+    <a href="https://www.instagram.com/thetwodesign" target="_blank" aria-label="Instagram">
+  <i class="fab fa-instagram"></i>
+</a>
+</div>
+    <div class="footer-logo">
+      <img id="footer-logo" alt="Logo de la empresa" src="images/logo.png">
+    </div>
+  </footer>
+
+</main>
+<script src="loads.js"></script>
+<script src="rsvp.js"></script>
+<script type="module" src="wishes.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
+  
