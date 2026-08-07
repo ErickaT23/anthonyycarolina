@@ -674,7 +674,7 @@ a{
     border-color: rgba(154,84,56,.22) !important;
   }
   .rsvp{
-    background:#fff;
+    background:var(--bg);
     text-align:center;
   }
   .rsvp-form{
