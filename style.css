@@ -747,10 +747,11 @@ a{
     margin:0 auto;
   }
   #footer{
-    color:#cc9173;
+    background:#000;
+    color:#fff;
   }
   #social-icons a{
-    color:#cc9173;
+    color:#fff;
   }
   .rsvp-msg.ok{
     background:rgba(194,117,82,.12);
@@ -842,7 +843,7 @@ a{
     font-size: 34px;
     letter-spacing: 0.05em;
     font-weight: 500;
-    background:var(--black-gloss-text);
+    background:var(--rose-gold-text);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
