@@ -327,43 +327,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ================= TRANSFERENCIA MODAL =================
 document.addEventListener("DOMContentLoaded", () => {
-  const btnOpen = document.getElementById("btnTransferencia");
   const btnClose = document.getElementById("btnCloseTransfer");
   const backdrop = document.getElementById("transferBackdrop");
 
   const btnCopy = document.getElementById("btnCopyAccount");
-  const accountEl = document.getElementById("accountNumber");
   const toast = document.getElementById("copyToast");
-
-  function openModal(){
-    if(!backdrop) return;
-    backdrop.style.display = "flex";
-    backdrop.setAttribute("aria-hidden", "false");
-  }
 
   function closeModal(){
     if(!backdrop) return;
     backdrop.style.display = "none";
     backdrop.setAttribute("aria-hidden", "true");
-  }
-
-  async function copyText(text){
-    // Clipboard API (moderno)
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return true;
-    }
-
-    // Fallback
-    const ta = document.createElement("textarea");
-    ta.value = text;
-    ta.style.position = "fixed";
-    ta.style.left = "-9999px";
-    document.body.appendChild(ta);
-    ta.select();
-    const ok = document.execCommand("copy");
-    document.body.removeChild(ta);
-    return ok;
   }
 
   function showToast(msg){
@@ -376,7 +349,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 1400);
   }
 
-  if (btnOpen) btnOpen.addEventListener("click", openModal);
   if (btnClose) btnClose.addEventListener("click", closeModal);
 
   if (backdrop) {
