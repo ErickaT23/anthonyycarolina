@@ -880,7 +880,7 @@ a{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    background-color:rgba(236,220,197,.7);
+     background-color:#c27552;
     flex-direction: column;
   }
   .footer-brand{
