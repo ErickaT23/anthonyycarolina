@@ -221,6 +221,11 @@ function initRotatingSep(images){
   let activeImg = imgEl;
   let hiddenImg = nextImgEl;
 
+  images.forEach((src) => {
+    const preload = new Image();
+    preload.src = src;
+  });
+
   function changeImage(){
 
     const nextIndex = (currentIndex + 1) % images.length;
