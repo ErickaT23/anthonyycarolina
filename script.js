@@ -220,6 +220,7 @@ function initRotatingSep(images){
   let currentIndex = 0;
   let activeImg = imgEl;
   let hiddenImg = nextImgEl;
+  let isChanging = false;
 
   images.forEach((src) => {
     const preload = new Image();
@@ -227,6 +228,9 @@ function initRotatingSep(images){
   });
 
   function changeImage(){
+    if (isChanging) return;
+
+    isChanging = true;
 
     const nextIndex = (currentIndex + 1) % images.length;
     const preload = new Image();
@@ -236,6 +240,10 @@ function initRotatingSep(images){
       activeImg.style.opacity = 0;
       [activeImg, hiddenImg] = [hiddenImg, activeImg];
       currentIndex = nextIndex;
+      isChanging = false;
+    };
+    preload.onerror = () => {
+      isChanging = false;
     };
     preload.src = images[nextIndex];
 
