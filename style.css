@@ -784,6 +784,12 @@ a{
     background-position: center;
     background-repeat: no-repeat;
   }
+.full-sep[style*="H3.webp"] {
+    height: 45vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 /* SOLO el separador rotativo */
 .full-sep-rotating{
     position: relative;
