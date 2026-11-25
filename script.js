@@ -36,11 +36,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 6) Foto separador rotativa (si existe el elemento)
   initRotatingSep([
-    "Images/FOTOS/H1.png",
-    "Images/FOTOS/H2.png",
-    "Images/FOTOS/H3.png",
-    "Images/FOTOS/H4.png",
-    "Images/FOTOS/V6.png",
+    "Images/FOTOS/H1.webp",
+    "Images/FOTOS/H2.webp",
+    "Images/FOTOS/H3.webp",
+    "Images/FOTOS/H4.webp",
+    "Images/FOTOS/V6.webp",
     
   ]);
 });
