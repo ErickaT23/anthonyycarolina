@@ -88,6 +88,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Si no hay id, no marcamos error: solo no hay invitado
   if (!guestId) {
     window.currentGuest = null;
+    window.dispatchEvent(new Event("guest:updated"));
     return;
   }
 
@@ -105,6 +106,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         passes: Number(remoteGuest.pases || 1),
         activo: remoteGuest.activo !== false,
       };
+    } else {
+      const localGuest = guests.find((item) => String(item.id) === String(guestId));
+      if (localGuest) {
+        guest = { ...localGuest, id: String(localGuest.id), activo: true };
+      }
     }
   } catch (error) {
     console.warn("No se pudo leer el invitado desde Firebase.", error);
@@ -112,6 +118,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (guest && guest.activo !== false) {
     window.currentGuest = guest;
+    window.dispatchEvent(new Event("guest:updated"));
 
     // Si tienes estos elementos en alguna parte, los llena (opcional)
     const guestNameEl = document.getElementById("guest-name");
@@ -124,6 +131,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   } else {
     window.currentGuest = null;
+    window.dispatchEvent(new Event("guest:updated"));
 
     const guestNameEl = document.getElementById("guest-name");
     if (guestNameEl) guestNameEl.textContent = "Invitado no encontrado";
