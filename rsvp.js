@@ -227,6 +227,18 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (res && (res.ok === true || res.success === true)) {
+        try {
+          await window.RSVPDatabase?.saveRsvp?.(getEventId(), invitado.id, {
+            guestId: String(invitado.id),
+            nombre: invitado.nombre,
+            pasesAsignados: Number(invitado.pases || 1),
+            cantidad: pasesSeleccionados,
+            respuesta: respuesta === "SI" ? "confirmado" : "no_asistira",
+            actualizadoEn: new Date().toISOString(),
+          });
+        } catch (firebaseError) {
+          console.warn("No se pudo sincronizar el RSVP con Firebase:", firebaseError);
+        }
         const okMessage = respuesta === "SI"
           ? "Gracias por confirmar tu asistencia. Será un privilegio compartir este día contigo."
           : "Lamentamos que no puedas acompañarnos en esta ocasión y agradecemos de corazón tu respuesta.";

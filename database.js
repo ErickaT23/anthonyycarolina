@@ -100,9 +100,19 @@ async function getInvitadoById(eventId, guestId) {
   return snapshot.exists() ? snapshot.val() : null;
 }
 
+async function getEventData(section, eventId = window.config?.event?.defaultEventId) {
+  const snapshot = await get(ref(db, `${getEventBasePath(eventId)}/${sanitizeFirebaseKey(section)}`));
+  return snapshot.exists() ? snapshot.val() : {};
+}
+
 async function saveWish(eventId, wish) {
   const wishesRef = ref(db, getEventDeseosPath(resolveEventId(eventId)));
   return push(wishesRef, wish);
+}
+
+async function saveRsvp(eventId, guestId, response) {
+  const rsvpRef = ref(db, `${getEventRsvpPath(resolveEventId(eventId))}/${sanitizeFirebaseKey(guestId)}`);
+  await set(rsvpRef, response);
 }
 
 function subscribeToWishes(eventId, callback, onError) {
@@ -126,8 +136,12 @@ window.RSVPDatabase = {
   seedEventConfigToFirebase,
   migrateLocalGuestsToFirebase,
   getInvitadoById,
+  getEventData,
+  saveRsvp,
   saveWish,
   subscribeToWishes
 };
+
+export { getEventData };
 
 window.seedEventConfigToFirebase = seedEventConfigToFirebase;
