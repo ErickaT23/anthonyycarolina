@@ -86,6 +86,7 @@ function markConfirmedUI(message) {
   const form = $("#rsvp-form");
   const btn = $("#btnConfirmarRsvp");
   const msg = $("#msgRsvp");
+  const whatsappButton = $("#btnWhatsappRsvp");
 
   if (form) form.classList.add("is-confirmed");
   document.querySelectorAll('#rsvp-form input, #rsvp-form select, #rsvp-form button').forEach((el) => {
@@ -158,6 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
       option.textContent = `${count} ${count === 1 ? "pase" : "pases"}`;
       guestCount.appendChild(option);
     }
+    if (whatsappButton) whatsappButton.hidden = false;
   }
 
   function toggleGuestCount() {
@@ -169,6 +171,12 @@ document.addEventListener("DOMContentLoaded", () => {
   paintGuestData();
   toggleGuestCount();
   hideMsg(msg);
+
+  whatsappButton?.addEventListener("click", () => {
+    const pases = radioYes.checked ? guestCount.value : "0";
+    const message = `Hola, soy ${invitado?.nombre || "un invitado"} (ID ${invitado?.id || ""}). Mi respuesta para la boda de Anthony y Carolina es: ${radioYes.checked ? "Sí asistiré" : radioNo.checked ? "No asistiré" : "aún no confirmo"}. Pases: ${pases}.`;
+    whatsappButton.href = `https://wa.me/50248997187?text=${encodeURIComponent(message)}`;
+  });
 
   window.addEventListener("guest:updated", paintGuestData);
   radioYes.addEventListener("change", toggleGuestCount);
