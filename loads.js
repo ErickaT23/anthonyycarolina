@@ -92,7 +92,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  let guest = null;
+  let guest = guests.find((item) => String(item.id) === String(guestId));
+  if (guest) {
+    guest = { ...guest, id: String(guest.id), activo: true };
+    window.currentGuest = guest;
+  }
 
   try {
     const remoteGuest = await window.RSVPDatabase?.getInvitadoById?.(
@@ -106,11 +110,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         passes: Number(remoteGuest.pases || 1),
         activo: remoteGuest.activo !== false,
       };
-    } else {
-      const localGuest = guests.find((item) => String(item.id) === String(guestId));
-      if (localGuest) {
-        guest = { ...localGuest, id: String(localGuest.id), activo: true };
-      }
+    } else if (guest) {
+      guest = { ...guest, id: String(guest.id), activo: true };
     }
   } catch (error) {
     console.warn("No se pudo leer el invitado desde Firebase.", error);

@@ -179,6 +179,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   window.addEventListener("guest:updated", paintGuestData);
+  setTimeout(paintGuestData, 0);
   radioYes.addEventListener("change", toggleGuestCount);
   radioNo.addEventListener("change", toggleGuestCount);
 
