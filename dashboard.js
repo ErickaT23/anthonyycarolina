@@ -1,12 +1,13 @@
 import "./config.js";
 import { getEventData } from "./database.js";
+import { onValue, ref } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
 const eventId = window.config?.event?.defaultEventId || "anthonycarolina2026";
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[c]));
 const normalizeStatus = (response) => response?.respuesta === "SI" ? "confirmado" : response?.respuesta === "NO" ? "no_asistira" : response?.respuesta || "pendiente";
 
 const [guestData, rsvpData] = await Promise.all([getEventData("invitados"), getEventData("rsvp")]);
-const entries = Object.values(guestData || {}).filter(Boolean).map((guest) => ({ guest, response: rsvpData?.[`${eventId}_${guest.id}`] || rsvpData?.[guest.id] }));
+let entries = Object.values(guestData || {}).filter(Boolean).map((guest) => ({ guest, response: rsvpData?.[`${eventId}_${guest.id}`] || rsvpData?.[guest.id] }));
 const statusLabel = (status) => ({ confirmado: "Confirmado", no_asistira: "No asistirá", pendiente: "Pendiente" }[status] || status);
 const confirmed = entries.filter((entry) => normalizeStatus(entry.response) === "confirmado");
 const declined = entries.filter((entry) => normalizeStatus(entry.response) === "no_asistira");
@@ -26,3 +27,14 @@ const render = () => {
 document.getElementById("search").addEventListener("input", render);
 document.getElementById("status-filter").addEventListener("change", render);
 render();
+onValue(ref(window.firebaseDb, `eventos/${eventId}/invitados`), (snapshot) => {
+  entries = Object.values(snapshot.val() || {}).filter(Boolean).map((guest) => ({ guest, response: rsvpData?.[`${eventId}_${guest.id}`] || rsvpData?.[guest.id] }));
+  const confirmedNow = entries.filter((entry) => normalizeStatus(entry.response) === "confirmado");
+  const declinedNow = entries.filter((entry) => normalizeStatus(entry.response) === "no_asistira");
+  document.getElementById("total-guests").textContent = entries.length;
+  document.getElementById("confirmed-count").textContent = confirmedNow.length;
+  document.getElementById("pending-count").textContent = entries.length - confirmedNow.length - declinedNow.length;
+  document.getElementById("declined-count").textContent = declinedNow.length;
+  document.getElementById("summary").textContent = `${entries.length} invitaciones · ${confirmedNow.length} confirmaciones recibidas`;
+  render();
+});

@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  let guest = guests.find((g) => String(g.id) === String(guestId));
+  let guest = null;
 
   try {
     const remoteGuest = await window.RSVPDatabase?.getInvitadoById?.(
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       };
     }
   } catch (error) {
-    console.warn("No se pudo leer el invitado desde Firebase; se usará la lista local.", error);
+    console.warn("No se pudo leer el invitado desde Firebase.", error);
   }
 
   if (guest && guest.activo !== false) {

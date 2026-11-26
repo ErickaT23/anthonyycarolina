@@ -79,14 +79,7 @@ function getGuestFromURL() {
       pases: Number(window.currentGuest.passes || 1),
     };
   }
-
-  const nameEl = document.getElementById("guestCardName");
-  const seatsEl = document.getElementById("guestCardSeats");
-  const nombre = (nameEl?.textContent || "Invitado").trim() || "Invitado";
-  const m = (seatsEl?.textContent || "").match(/\d+/);
-  const pases = m ? parseInt(m[0], 10) : 1;
-
-  return { id, nombre, pases };
+  return null;
 }
 
 function markConfirmedUI(message) {
