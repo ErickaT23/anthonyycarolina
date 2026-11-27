@@ -181,6 +181,14 @@ document.addEventListener("DOMContentLoaded", () => {
   (async () => {
     if (!invitado) return;
     try {
+      const savedRsvp = await window.RSVPDatabase?.getEventData?.("rsvp", getEventId());
+      const savedResponse = savedRsvp?.[`${getEventId()}_${invitado.id}`] || savedRsvp?.[invitado.id];
+      if (savedResponse?.respuesta === "confirmado" || savedResponse?.respuesta === "no_asistira") {
+        markConfirmedUI(savedResponse.respuesta === "confirmado"
+          ? "Gracias por confirmar tu asistencia. Nos alegra mucho compartir este día tan especial contigo. ¡Nos vemos pronto en nuestra boda!"
+          : "Lamentamos que no puedas acompañarnos. Te extrañaremos y agradecemos mucho que nos hayas hecho saber tu respuesta.");
+        return;
+      }
       const ya = await apiCheck(getRemoteGuestId(invitado.id));
       if (ya) {
         markConfirmedUI();
@@ -216,38 +224,34 @@ document.addEventListener("DOMContentLoaded", () => {
     btnSubmit.disabled = true;
 
     try {
-      const res = await apiSend({
-        guestId: getRemoteGuestId(invitado.id),
+      const firebaseResponse = {
+        guestId: String(invitado.id),
         nombre: invitado.nombre,
-        pases: String(pasesSeleccionados),
-        respuesta,
-      });
+        pasesAsignados: Number(invitado.pases || 1),
+        cantidad: pasesSeleccionados,
+        respuesta: respuesta === "SI" ? "confirmado" : "no_asistira",
+        actualizadoEn: new Date().toISOString(),
+      };
+      await window.RSVPDatabase?.saveRsvp?.(getEventId(), invitado.id, firebaseResponse);
 
-      if (res && (res.ok === true || res.success === true)) {
-        try {
-          await window.RSVPDatabase?.saveRsvp?.(getEventId(), invitado.id, {
-            guestId: String(invitado.id),
-            nombre: invitado.nombre,
-            pasesAsignados: Number(invitado.pases || 1),
-            cantidad: pasesSeleccionados,
-            respuesta: respuesta === "SI" ? "confirmado" : "no_asistira",
-            actualizadoEn: new Date().toISOString(),
-          });
-        } catch (firebaseError) {
-          console.warn("No se pudo sincronizar el RSVP con Firebase:", firebaseError);
-        }
-         const okMessage = respuesta === "SI"
+      try {
+        await apiSend({
+          guestId: getRemoteGuestId(invitado.id),
+          nombre: invitado.nombre,
+          pases: String(pasesSeleccionados),
+          respuesta,
+        });
+      } catch (apiError) {
+        console.warn("No se pudo enviar la respuesta externa:", apiError);
+      }
+
+        const okMessage = respuesta === "SI"
            ? "Gracias por confirmar tu asistencia. Nos alegra mucho compartir este día tan especial contigo. ¡Nos vemos pronto en nuestra boda!"
            : "Lamentamos que no puedas acompañarnos. Te extrañaremos y agradecemos mucho que nos hayas hecho saber tu respuesta.";
          markConfirmedUI(okMessage);
          const message = `Hola, soy ${invitado.nombre} (ID ${invitado.id}). Mi respuesta para la boda de Anthony y Carolina es: ${respuesta === "SI" ? "Sí asistiré" : "No asistiré"}. Pases: ${pasesSeleccionados}.`;
          window.location.href = `https://wa.me/50248997187?text=${encodeURIComponent(message)}`;
         return;
-      }
-
-      console.warn("Respuesta del endpoint:", res);
-      btnSubmit.disabled = false;
-      showMsg(msg, "No se pudo guardar tu respuesta. Intenta de nuevo.", "error");
     } catch (error) {
       console.error("apiSend:", error);
       btnSubmit.disabled = false;
