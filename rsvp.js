@@ -185,29 +185,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (!invitado) return;
     try {
-      const localResponse = localStorage.getItem(`rsvp_response_${getEventId()}_${invitado.id}`);
-      if (localResponse === "confirmado" || localResponse === "no_asistira") {
-        markConfirmedUI(localResponse === "confirmado"
-          ? "Gracias por confirmar tu asistencia. Nos alegra mucho compartir este día tan especial contigo. ¡Nos vemos pronto en nuestra boda!"
-          : "Lamentamos que no puedas acompañarnos. Te extrañaremos y agradecemos mucho que nos hayas hecho saber tu respuesta.");
-        return;
-      }
       const savedRsvp = await window.RSVPDatabase?.getEventData?.("rsvp", getEventId());
       const savedResponse = savedRsvp?.[`${getEventId()}_${invitado.id}`] || savedRsvp?.[invitado.id];
       const savedStatus = savedResponse?.respuesta === "SI" ? "confirmado" : savedResponse?.respuesta === "NO" ? "no_asistira" : savedResponse?.respuesta;
       if (savedStatus === "confirmado" || savedStatus === "no_asistira") {
-        localStorage.setItem(`rsvp_response_${getEventId()}_${invitado.id}`, savedStatus);
         markConfirmedUI(savedStatus === "confirmado"
           ? "Gracias por confirmar tu asistencia. Nos alegra mucho compartir este día tan especial contigo. ¡Nos vemos pronto en nuestra boda!"
           : "Lamentamos que no puedas acompañarnos. Te extrañaremos y agradecemos mucho que nos hayas hecho saber tu respuesta.");
         return;
       }
-      const ya = await apiCheck(getRemoteGuestId(invitado.id));
-      if (ya) {
-        markConfirmedUI();
-      } else {
-        resetConfirmUI();
-      }
+      resetConfirmUI();
     } catch (error) {
       console.warn("apiCheck inicial falló:", error);
       resetConfirmUI();
@@ -237,13 +224,6 @@ document.addEventListener("DOMContentLoaded", () => {
     btnSubmit.disabled = true;
 
     try {
-      const localStatus = localStorage.getItem(`rsvp_response_${getEventId()}_${invitado.id}`);
-      if (localStatus === "confirmado" || localStatus === "no_asistira") {
-        markConfirmedUI(localStatus === "confirmado"
-          ? "Gracias por confirmar tu asistencia. Nos alegra mucho compartir este día tan especial contigo. ¡Nos vemos pronto en nuestra boda!"
-          : "Lamentamos que no puedas acompañarnos. Te extrañaremos y agradecemos mucho que nos hayas hecho saber tu respuesta.");
-        return;
-      }
       const existingRsvps = await window.RSVPDatabase?.getEventData?.("rsvp", getEventId());
       const existingRsvp = existingRsvps?.[`${getEventId()}_${invitado.id}`] || existingRsvps?.[invitado.id];
       if (existingRsvp?.respuesta === "confirmado" || existingRsvp?.respuesta === "no_asistira" || existingRsvp?.respuesta === "SI" || existingRsvp?.respuesta === "NO") {
@@ -251,7 +231,6 @@ document.addEventListener("DOMContentLoaded", () => {
         markConfirmedUI(existingStatus === "confirmado"
           ? "Gracias por confirmar tu asistencia. Nos alegra mucho compartir este día tan especial contigo. ¡Nos vemos pronto en nuestra boda!"
           : "Lamentamos que no puedas acompañarnos. Te extrañaremos y agradecemos mucho que nos hayas hecho saber tu respuesta.");
-        localStorage.setItem(`rsvp_response_${getEventId()}_${invitado.id}`, existingStatus);
         return;
       }
       const firebaseResponse = {
@@ -279,7 +258,6 @@ document.addEventListener("DOMContentLoaded", () => {
            ? "Gracias por confirmar tu asistencia. Nos alegra mucho compartir este día tan especial contigo. ¡Nos vemos pronto en nuestra boda!"
            : "Lamentamos que no puedas acompañarnos. Te extrañaremos y agradecemos mucho que nos hayas hecho saber tu respuesta.";
          markConfirmedUI(okMessage);
-         localStorage.setItem(`rsvp_response_${getEventId()}_${invitado.id}`, respuesta === "SI" ? "confirmado" : "no_asistira");
          const message = `Hola, soy ${invitado.nombre} (ID ${invitado.id}). Mi respuesta para la boda de Anthony y Carolina es: ${respuesta === "SI" ? "Sí asistiré" : "No asistiré"}. Pases: ${pasesSeleccionados}.`;
          window.location.href = `https://wa.me/50248997187?text=${encodeURIComponent(message)}`;
         return;
