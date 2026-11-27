@@ -222,6 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
       : 0;
 
     btnSubmit.disabled = true;
+    markConfirmedUI("Estamos registrando tu respuesta...");
 
     try {
       const existingRsvps = await window.RSVPDatabase?.getEventData?.("rsvp", getEventId());
@@ -243,27 +244,24 @@ document.addEventListener("DOMContentLoaded", () => {
       };
       await window.RSVPDatabase?.saveRsvp?.(getEventId(), invitado.id, firebaseResponse);
 
-      try {
-        await apiSend({
+      apiSend({
           guestId: getRemoteGuestId(invitado.id),
           nombre: invitado.nombre,
           pases: String(pasesSeleccionados),
           respuesta,
-        });
-      } catch (apiError) {
-        console.warn("No se pudo enviar la respuesta externa:", apiError);
-      }
+      }).catch((apiError) => console.warn("No se pudo enviar la respuesta externa:", apiError));
 
         const okMessage = respuesta === "SI"
            ? "Gracias por confirmar tu asistencia. Nos alegra mucho compartir este día tan especial contigo. ¡Nos vemos pronto en nuestra boda!"
            : "Lamentamos que no puedas acompañarnos. Te extrañaremos y agradecemos mucho que nos hayas hecho saber tu respuesta.";
          markConfirmedUI(okMessage);
          const message = `Hola, soy ${invitado.nombre} (ID ${invitado.id}). Mi respuesta para la boda de Anthony y Carolina es: ${respuesta === "SI" ? "Sí asistiré" : "No asistiré"}. Pases: ${pasesSeleccionados}.`;
-         window.location.href = `https://wa.me/50248997187?text=${encodeURIComponent(message)}`;
+         setTimeout(() => { window.location.href = `https://wa.me/50248997187?text=${encodeURIComponent(message)}`; }, 150);
         return;
     } catch (error) {
       console.error("apiSend:", error);
       btnSubmit.disabled = false;
+      resetConfirmUI();
       showMsg(msg, "Error de conexión al enviar tu respuesta.", "error");
     }
   });
