@@ -634,10 +634,15 @@ a{
     flex-wrap:wrap;
   }
   /* Botón principal */
-#btnConfirmarRsvp{
+  #btnConfirmarRsvp{
     width:min(100%, 320px);
     cursor: pointer;
   }
+  #btnConfirmarRsvp[hidden]{display:none !important}
+  .rsvp-radio-option:first-child span{border-color:rgba(28,25,23,.38);color:#1c1917}
+  .rsvp-radio-option:last-child span{border-color:rgba(183,134,104,.6);color:#9a684d}
+  .rsvp-radio-option:first-child input:checked + span{background:#1c1917;border-color:#1c1917;color:#fffaf5}
+  .rsvp-radio-option:last-child input:checked + span{background:#c99b7d;border-color:#a9785c;color:#2b1b14}
   #btnConfirmarRsvp:hover{
     color: #fff;
   }

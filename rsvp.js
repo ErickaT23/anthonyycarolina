@@ -86,7 +86,9 @@ function markConfirmedUI(message) {
   const form = $("#rsvp-form");
   const btn = $("#btnConfirmarRsvp");
   const msg = $("#msgRsvp");
-  const whatsappButton = $("#btnWhatsappRsvp");
+  const popup = $("#rsvpPopup");
+  const popupCount = $("#rsvp-popup-count");
+  const popupYes = $("#rsvp-popup-yes");
 
   if (form) form.classList.add("is-confirmed");
   document.querySelectorAll('#rsvp-form input, #rsvp-form select, #rsvp-form button').forEach((el) => {
@@ -159,29 +161,22 @@ document.addEventListener("DOMContentLoaded", () => {
       option.textContent = `${count} ${count === 1 ? "pase" : "pases"}`;
       guestCount.appendChild(option);
     }
-    if (whatsappButton) whatsappButton.hidden = false;
   }
 
   function toggleGuestCount() {
     const show = radioYes.checked;
     guestCountWrapper.style.display = show ? "grid" : "none";
+    guestCountWrapper.hidden = !show;
     guestCount.disabled = !show;
   }
 
   paintGuestData();
   toggleGuestCount();
   hideMsg(msg);
-
-  whatsappButton?.addEventListener("click", () => {
-    const pases = radioYes.checked ? guestCount.value : "0";
-    const message = `Hola, soy ${invitado?.nombre || "un invitado"} (ID ${invitado?.id || ""}). Mi respuesta para la boda de Anthony y Carolina es: ${radioYes.checked ? "Sí asistiré" : radioNo.checked ? "No asistiré" : "aún no confirmo"}. Pases: ${pases}.`;
-    whatsappButton.href = `https://wa.me/50248997187?text=${encodeURIComponent(message)}`;
-  });
-
   window.addEventListener("guest:updated", paintGuestData);
   setTimeout(paintGuestData, 0);
-  radioYes.addEventListener("change", toggleGuestCount);
-  radioNo.addEventListener("change", toggleGuestCount);
+  radioYes.addEventListener("change", () => { toggleGuestCount(); btnSubmit.hidden = false; });
+  radioNo.addEventListener("change", () => { toggleGuestCount(); btnSubmit.hidden = false; });
 
   (async () => {
     if (!invitado) return;
@@ -244,7 +239,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const okMessage = respuesta === "SI"
           ? "Gracias por confirmar tu asistencia. Será un privilegio compartir este día contigo."
           : "Lamentamos que no puedas acompañarnos en esta ocasión y agradecemos de corazón tu respuesta.";
-        markConfirmedUI(okMessage);
+         markConfirmedUI(okMessage);
+         const message = `Hola, soy ${invitado.nombre} (ID ${invitado.id}). Mi respuesta para la boda de Anthony y Carolina es: ${respuesta === "SI" ? "Sí asistiré" : "No asistiré"}. Pases: ${pasesSeleccionados}.`;
+         window.location.href = `https://wa.me/50248997187?text=${encodeURIComponent(message)}`;
         return;
       }
 
