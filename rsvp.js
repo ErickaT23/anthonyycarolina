@@ -90,7 +90,7 @@ function markConfirmedUI(message) {
   const popupCount = $("#rsvp-popup-count");
   const popupYes = $("#rsvp-popup-yes");
 
-  if (form) form.classList.add("is-confirmed");
+  if (form) { form.classList.add("is-confirmed"); form.hidden = true; }
   document.querySelectorAll('#rsvp-form input, #rsvp-form select, #rsvp-form button').forEach((el) => {
     if (!el.hasAttribute("readonly")) el.disabled = true;
   });
@@ -103,7 +103,7 @@ function markConfirmedUI(message) {
   if (msg) {
     msg.style.display = "block";
     msg.className = "rsvp-msg ok";
-    msg.textContent = message || "Gracias por confirmar tu asistencia.";
+    msg.textContent = message || "Tu respuesta ya fue registrada. Muchas gracias.";
   }
 }
 
@@ -112,7 +112,7 @@ function resetConfirmUI() {
   const btn = $("#btnConfirmarRsvp");
   const msg = $("#msgRsvp");
 
-  if (form) form.classList.remove("is-confirmed");
+  if (form) { form.classList.remove("is-confirmed"); form.hidden = false; }
   document.querySelectorAll('#rsvp-form input, #rsvp-form select, #rsvp-form button').forEach((el) => {
     if (!el.hasAttribute("readonly")) el.disabled = false;
   });
@@ -236,9 +236,9 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (firebaseError) {
           console.warn("No se pudo sincronizar el RSVP con Firebase:", firebaseError);
         }
-        const okMessage = respuesta === "SI"
-          ? "Gracias por confirmar tu asistencia. Será un privilegio compartir este día contigo."
-          : "Lamentamos que no puedas acompañarnos en esta ocasión y agradecemos de corazón tu respuesta.";
+         const okMessage = respuesta === "SI"
+           ? "Gracias por confirmar tu asistencia. Nos alegra mucho compartir este día tan especial contigo. ¡Nos vemos pronto en nuestra boda!"
+           : "Lamentamos que no puedas acompañarnos. Te extrañaremos y agradecemos mucho que nos hayas hecho saber tu respuesta.";
          markConfirmedUI(okMessage);
          const message = `Hola, soy ${invitado.nombre} (ID ${invitado.id}). Mi respuesta para la boda de Anthony y Carolina es: ${respuesta === "SI" ? "Sí asistiré" : "No asistiré"}. Pases: ${pasesSeleccionados}.`;
          window.location.href = `https://wa.me/50248997187?text=${encodeURIComponent(message)}`;

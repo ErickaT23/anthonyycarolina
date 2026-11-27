@@ -5,6 +5,7 @@ import { onValue, ref } from "https://www.gstatic.com/firebasejs/11.3.1/firebase
 const eventId = window.config?.event?.defaultEventId || "anthonycarolina2026";
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[c]));
 const normalizeStatus = (response) => response?.respuesta === "SI" ? "confirmado" : response?.respuesta === "NO" ? "no_asistira" : response?.respuesta || "pendiente";
+const formatDate = (value) => { if (!value) return "-"; const date = new Date(value); return Number.isNaN(date.getTime()) ? "-" : new Intl.DateTimeFormat("es-GT", { dateStyle: "short", timeStyle: "short" }).format(date); };
 
 const [guestData, rsvpData] = await Promise.all([getEventData("invitados"), getEventData("rsvp")]);
 let entries = Object.values(guestData || {}).filter(Boolean).map((guest) => ({ guest, response: rsvpData?.[`${eventId}_${guest.id}`] || rsvpData?.[guest.id] }));
@@ -22,7 +23,7 @@ const render = () => {
   const filter = document.getElementById("status-filter").value;
   const rows = entries.filter(({ guest, response }) => { const status = normalizeStatus(response); return String(guest.nombre || "").toLowerCase().includes(query) && (filter === "todos" || status === filter); });
   document.getElementById("empty").hidden = rows.length > 0;
-  document.getElementById("rows").innerHTML = rows.map(({ guest, response }) => { const status = normalizeStatus(response); return `<tr><td>${escapeHtml(guest.nombre)}</td><td>${guest.pases ?? "Libre"}</td><td><span class="status ${status}">${statusLabel(status)}</span></td><td>${response?.cantidad ?? "-"}</td></tr>`; }).join("");
+  document.getElementById("rows").innerHTML = rows.map(({ guest, response }) => { const status = normalizeStatus(response); return `<tr><td data-label="Invitado">${escapeHtml(guest.nombre)}</td><td data-label="Pases">${guest.pases ?? "Libre"}</td><td data-label="Estado"><span class="status ${status}">${statusLabel(status)}</span></td><td data-label="Confirmados">${response?.cantidad ?? "-"}</td><td data-label="Fecha y hora">${formatDate(response?.actualizadoEn || response?.timestamp || response?.fecha)}</td></tr>`; }).join("");
 };
 document.getElementById("search").addEventListener("input", render);
 document.getElementById("status-filter").addEventListener("change", render);

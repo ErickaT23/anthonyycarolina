@@ -639,6 +639,7 @@ a{
     cursor: pointer;
   }
   #btnConfirmarRsvp[hidden]{display:none !important}
+  #rsvp-form[hidden]{display:none !important}
   .rsvp-radio-option:first-child span{border-color:rgba(28,25,23,.38);color:#1c1917}
   .rsvp-radio-option:last-child span{border-color:rgba(183,134,104,.6);color:#9a684d}
   .rsvp-radio-option:first-child input:checked + span{background:#1c1917;border-color:#1c1917;color:#fffaf5}
